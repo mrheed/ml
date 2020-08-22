@@ -8,7 +8,7 @@ Plan :
 ## Cost Function
 - Linear function (hypothesis function) = h(x) = θ₀ + θ₁x
 - Cost function = J(Θ₀, Θ₁) = 1/2m * sigma(h(xⁱ) - yⁱ)²
-The idea of choosing the value of θ₀,θ₁ in linear function in order to get the accurate regression is to find the minimum value of J(Θ₀, Θ₁)
+- The idea of choosing the value of θ₀,θ₁ in linear function in order to get the accurate regression is to find the minimum value of J(Θ₀, Θ₁)
 
 ## Gradient Descent
 Using gradient descent, we could find the minimum value of a function. 
