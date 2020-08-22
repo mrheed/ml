@@ -66,8 +66,9 @@ Let's define the notation:
  - xⁱ = input(features) of the i-th training example 
  - xₓ = value of feature x in i-th training example
 
-`	  	| x₀ |				| Θ₀ | 
-	  	| x₁ |				| Θ₁ | 
+`	  	| x₀ |				| Θ₀ | `
+
+`	  	| x₁ |				| Θ₁ | 
 	  	| x₂ |				| Θ₂ | 
   X =	| .. |		Θ =	| .. | 
 	  	| .. |				| .. | 
