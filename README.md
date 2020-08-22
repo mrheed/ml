@@ -45,14 +45,20 @@ Matrix Operation:
 ## Linear Regression
 ### Multiple Features
 
-`  Size   |   nBed   |   nFlo   |   aHom   |   Price    
------------------------------------------------------- 
-   2104   |     5    |     1    |    45    |   460      
-	 1416   |     3    |     2    |    40    |   232     
-	 1534   |     3    |     2    |    30    |   315     
-	 852    |     2    |     1    |    36    |   178     
-	 ...    |    ...   |    ...   |    ...   |   ...     
-                                                       `
+`  Size   |   nBed   |   nFlo   |   aHom   |   Price    `
+
+`------------------------------------------------------  `
+
+`  2104   |     5    |     1    |    45    |   460      ` 
+
+`	 1416   |     3    |     2    |    40    |   232      `
+
+`	 1534   |     3    |     2    |    30    |   315      `
+
+`	 852    |     2    |     1    |    36    |   178      `
+
+`	 ...    |    ...   |    ...   |    ...   |   ...      `
+
 
 Suppose we have training data like so, we are going to predict the price using variables size, nbed, nflo, and ahom.
 Let's define the notation:
@@ -67,10 +73,15 @@ Let's define the notation:
  - xₓ = value of feature x in i-th training example
 
 `	  	| x₀ |				| Θ₀ | `
+
 `	  	| x₁ |				| Θ₁ | `
+
 `	  	| x₂ |				| Θ₂ | `
+
 ` X =	| .. |		Θ =	| .. | `
+
 `	  	| .. |				| .. | `
+
 `	  	| xₓ |				| Θₓ | `
 
 ` h(x)	= Θ₀x₀ + Θ₁x₁ + Θ₂x₂ + ... + Θₓxₓ 
