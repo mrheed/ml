@@ -37,7 +37,7 @@ Matrix Identity:
  - The identity matrix has the property 1 along the diagonal and 0 for others
 
 Matrix Operation:
- - Matrix Inverse, if A is an m x m (square) matrix, and it if has an inverse
+ - Matrix Inverse, if A is an m x m (square) matrix, and it is has an inverse
   - A(A⁻ⁱ) = A⁻ⁱA = I
 	- A matrix that don't have an inverse are sometimes called the singular matrix or degenerate matrix (if the matrix is too close to 0)
  - Transpose, rotate the matrix 90 deg counter-clockwise and flip it horizontally
