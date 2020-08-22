@@ -67,12 +67,11 @@ Let's define the notation:
  - xₓ = value of feature x in i-th training example
 
 `	  	| x₀ |				| Θ₀ | `
-
-`	  	| x₁ |				| Θ₁ | 
-	  	| x₂ |				| Θ₂ | 
-  X =	| .. |		Θ =	| .. | 
-	  	| .. |				| .. | 
-	  	| xₓ |				| Θₓ | `
+`	  	| x₁ |				| Θ₁ | `
+`	  	| x₂ |				| Θ₂ | `
+` X =	| .. |		Θ =	| .. | `
+`	  	| .. |				| .. | `
+`	  	| xₓ |				| Θₓ | `
 
 ` h(x)	= Θ₀x₀ + Θ₁x₁ + Θ₂x₂ + ... + Θₓxₓ 
 	  		= ΘᵀX `
