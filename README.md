@@ -84,6 +84,6 @@ Let's define the notation:
 ` h(x)	= Θ₀x₀ + Θ₁x₁ + Θ₂x₂ + ... + Θₓxₓ 
 	  		= ΘᵀX `
 
-The gradient descent computation is just like the notation above, derivative sigmoid(cost function) with respect of Θₓ over 2 * sum of training data
+The gradient descent computation is just like the notation above that i have mention, derivative sigmoid(cost function) with respect of Θₓ over 2 * sum of training data
 
 ### TTD : Syahid Nurrohim
