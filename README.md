@@ -4,7 +4,7 @@ Neural Network :
 Plan :
 	https://cs231n.github.io/neural-networks-case-study/
 	
-# Machine Learning by Andrew Ng resume:
+# Resume 
 ## Cost Function
 - Linear function (hypothesis function) = h(x) = θ₀ + θ₁x
 - Cost function = J(Θ₀, Θ₁) = 1/2m * sigma(h(xⁱ) - yⁱ)²
@@ -85,3 +85,5 @@ Let's define the notation:
 	  		= ΘᵀX `
 
 The gradient descent computation is just like the notation above, derivative sigmoid(cost function) with respect of Θₓ over 2 * sum of training data
+
+### TTD : Syahid Nurrohim
