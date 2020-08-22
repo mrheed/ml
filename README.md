@@ -47,8 +47,6 @@ Matrix Operation:
 
 `  Size   |   nBed   |   nFlo   |   aHom   |   Price    `
 
-`------------------------------------------------------  `
-
 `  2104   |     5    |     1    |    45    |   460      ` 
 
 `	 1416   |     3    |     2    |    40    |   232      `
@@ -57,7 +55,6 @@ Matrix Operation:
 
 `	 852    |     2    |     1    |    36    |   178      `
 
-`	 ...    |    ...   |    ...   |    ...   |   ...      `
 
 
 Suppose we have training data like so, we are going to predict the price using variables size, nbed, nflo, and ahom.
