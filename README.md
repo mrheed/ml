@@ -93,12 +93,12 @@ The gradient descent computation is just like the notation above that i have men
 
 ## Normal Equation
  - Θ = (X^TX)^-1X^Ty
- - What if X^TX is non-invertible? (singular/degenerate matrix)
+ - What if X^TX is non-invertible ? (singular/degenerate matrix)
   - Redundant features (linearly dependent)
-	 - x₁ = size in feet^2
+   - x₁ = size in feet^2
    - x₂ = size in m^2
-	  - Solve: x₁ = (3.28)^2x₂
+    - x₁ = (3.28)^2x₂
 	- Too many features (e.g m <= n)
-	 - Delete some features, or use regularization
+   - Delete some seatures, or use regularization
 
 ### TTD : Syahid Nurrohim
