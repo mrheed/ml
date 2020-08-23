@@ -16,10 +16,10 @@ Using gradient descent, we could find the minimum value of a function.
  - Θₓ = Θₓ - ∝ * ∂(J(Θ₀, Θ₁)) / ∂Θₓ
 	- The alpha represent as the learning rate of the algorithm and it controls how big the stepness
 	- We have to update the value of Θ₀ and Θ₁ simultaneously like so
-	 - temp0 = Θ₀ - ∝ * ∂(J(Θ₀, Θ₁)) / ∂Θₓ
-	 - temp1 = Θ₁ - ∝ * ∂(J(Θ₀, Θ₁)) / ∂Θₓ
-	 - Θ₀ = temp0
-	 - Θ₁ = temp1
+		- temp0 = Θ₀ - ∝ * ∂(J(Θ₀, Θ₁)) / ∂Θₓ
+	 	- temp1 = Θ₁ - ∝ * ∂(J(Θ₀, Θ₁)) / ∂Θₓ
+	 	- Θ₀ = temp0
+	 	- Θ₁ = temp1
  - What if the Θₓ is already at the local minimum ?
  - The current value will be Θₓ - ∝ * 0, so one step of gradient descent does absolutely nothing
 s we approach a local minimum, gradient descent will automatically take smaller steps. So, no need to decrease ∝ over time.
@@ -95,10 +95,10 @@ The gradient descent computation is just like the notation above that i have men
  - Θ = (X^TX)^-1X^Ty
  - What if X^TX is non-invertible ? (singular/degenerate matrix)
   - Redundant features (linearly dependent)
-   - x₁ = size in feet^2
-   - x₂ = size in m^2
-    - x₁ = (3.28)^2x₂
-     - Too many features (e.g m <= n)
+  	- x₁ = size in feet^2
+   	- x₂ = size in m^2
+    	- x₁ = (3.28)^2x₂
+     	 - Too many features (e.g m <= n)
    - Delete some seatures, or use regularization
 
 ### TTD : Syahid Nurrohim
