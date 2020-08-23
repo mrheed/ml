@@ -49,11 +49,11 @@ Matrix Operation:
 
 `  2104   |     5    |     1    |    45    |   460      ` 
 
-`	 1416   |     3    |     2    |    40    |   232      `
+`  1416   |     3    |     2    |    40    |   232      `
 
-`	 1534   |     3    |     2    |    30    |   315      `
+`  1534   |     3    |     2    |    30    |   315      `
 
-`	 852    |     2    |     1    |    36    |   178      `
+`  852    |     2    |     1    |    36    |   178      `
 
 
 
@@ -75,7 +75,7 @@ Let's define the notation:
 
 `	  	| x₂ |				| Θ₂ | `
 
-` X =	| .. |		Θ =	| .. | `
+`    X =	| .. |  		Θ =	| .. | `
 
 `	  	| .. |				| .. | `
 
@@ -98,7 +98,7 @@ The gradient descent computation is just like the notation above that i have men
    - x₁ = size in feet^2
    - x₂ = size in m^2
     - x₁ = (3.28)^2x₂
-	- Too many features (e.g m <= n)
+     - Too many features (e.g m <= n)
    - Delete some seatures, or use regularization
 
 ### TTD : Syahid Nurrohim
