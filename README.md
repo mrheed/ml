@@ -86,4 +86,19 @@ Let's define the notation:
 
 The gradient descent computation is just like the notation above that i have mention, derivative sigmoid(cost function) with respect of Θₓ over 2 * sum of training data
 
+ - Automatic convergence, Declare convergence if J(Θ) decreases by less than 10^-3 in one iteration
+  - For sufficiently small ∝, J(Θ) should decrease on every iteration
+	- If ∝ is too large, J(Θ) may not decrease on every iteration even diverge
+	- But if ∝ is too small, gradient descent can be slow to converge
+
+## Normal Equation
+ - Θ = (X^TX)^-1X^Ty
+ - What if X^TX is non-invertible? (singular/degenerate matrix)
+  - Redundant features (linearly dependent)
+	 - x₁ = size in feet^2
+   - x₂ = size in m^2
+	  - Solve: x₁ = (3.28)^2x₂
+	- Too many features (e.g m <= n)
+	 - Delete some features, or use regularization
+
 ### TTD : Syahid Nurrohim
