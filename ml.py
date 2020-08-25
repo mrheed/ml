@@ -64,12 +64,13 @@ def cost_der(x, y, param, active = 0):
     x = linear(x, param)
     return 1/n*sum([x[i]*param[i][active] for i in range(n)])
 
-def grad_descent(x, y, param, lrate = 0.1, target = 0.5):
+def grad_descent(x, y, param, lrate = 0.1, epoch = 100):
     loss = cost_der(x, y, param, 0)
     der = [loss - (lrate*cost_der(x, y, param, i)) for i in range(len(param[0]))]
-    print(der)
-    if target <= loss:
-        grad_descent(x, y, [der] * len(x), lrate = lrate, target = target)
+    print(loss)
+    if epoch != 0:
+        grad_descent(x, y, [der] * len(x), lrate = lrate, epoch = epoch-1)
+    print(param)
 
 def normal_eq():
     pass
@@ -81,9 +82,9 @@ def main():
     # A[0][0]B[0][2] * A[0][1]B[1][2] * A[0][2]B[2][2]
     # A[0][0]B[0][3] * A[0][1]B[1][3] * A[0][2]B[2][3]
     # Linear
-    pop = [1,2,3,4,5,6]
+    pop = [2,3,4,5,6,7]
     year = [[1], [2], [3], [4], [5], [6]]
-    grad_descent(year, pop, [[1, 1]] * len(year), lrate = 0.1, target = 1)
+    grad_descent(year, pop, [[1, 1]] * len(year), lrate = 1)
     # Sini
     
 
