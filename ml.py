@@ -98,6 +98,7 @@ def main():
     y = [11,22,33,44,55,66]
     x = [[1], [2], [3], [4], [5], [6]]
     epoch = 1000
+    # The 0 index of param is for bias, in other words the actual param length is 1
     param = [0, 22]
     new_param = train(x, y, param, lrate = 0.0005, epoch = epoch)
     prediction = [[6], [7], [7.5]]
