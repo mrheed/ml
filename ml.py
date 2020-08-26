@@ -1,4 +1,4 @@
-import random, sys, resource
+import sys
 
 class Matrix:
     def __init__(self, data):
@@ -62,10 +62,9 @@ def cost_der(x, y, param, active = 0):
     # Turunan parsial dari fungsi cost
     return (1/n)*sum([(x[i]-y[i])*(param[active] if active != 0 else 1) for i in range(n)])
 
-# Gradient descent, mencari titik minimum dari fungsi hingga gradient dari titik tersebut menjadi 0
+# Gradient descent, mencari titik minimum dari fungsi hingga gradient dari titik tersebut mendekati/menjadi 0
 def grad_descent(x, y, param, lrate, epoch):
-    der = [param[i] - (lrate*cost_der(x, y, param, i)) for i in range(len(param))]
-    return der
+    return [param[i] - (lrate*cost_der(x, y, param, i)) for i in range(len(param))]
 
 def train(x, y, param, lrate = 0.1, epoch = 100):
     for i in range(epoch):
