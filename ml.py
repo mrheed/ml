@@ -9,10 +9,7 @@ class Matrix:
     def add(self, matrix):
         for i in range(self.row):
             for j in range(self.col):
-                if len(matrix) == 1:
-                    self.matrix[i][j] += matrix[0]
-                else:
-                    self.matrix[i][j] = matrix[i][j]
+                self.matrix[i][j] += matrix[0] if len(matrix) == 1 else matrix[i][j]
         return self
     
     def dot(self, matrix):
@@ -84,7 +81,7 @@ def predict(x, param, expected):
         print("="*50)
         print("{}. Prediction   -> {}".format(i, v))
         print("{}. Expected     -> {}".format(i, expected[i-1]))
-        print("{}. Error        -> {}".format(i, expected[i-1]-v))
+        print("{}. Delta        -> {}".format(i, v-expected[i-1]))
         print("="*50)
 
 
