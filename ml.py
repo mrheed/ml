@@ -59,7 +59,6 @@ def cost(x, y, param):
 def cost_der(x, y, param, active = 0):
     n = len(y)
     x = linear(x, param)
-    #print([(x[i]-y[i])*(param[i][active] if active != 0 else 1) for i in range(n)])
     # Turunan parsial dari fungsi cost
     return (1/n)*sum([(x[i]-y[i])*(param[active] if active != 0 else 1) for i in range(n)])
 
@@ -90,19 +89,18 @@ def normal_eq():
     pass
 
 def main():
+    sys.setrecursionlimit(20000)
     # Matrix 
     # A[0][0]B[0][0] * A[0][1]B[1][0] * A[0][2]B[2][0]
     # A[0][0]B[0][1] * A[0][1]B[1][1] * A[0][2]B[2][1]
     # A[0][0]B[0][2] * A[0][1]B[1][2] * A[0][2]B[2][2]
     # A[0][0]B[0][3] * A[0][1]B[1][3] * A[0][2]B[2][3]
     # Linear
-    pop = [11,22,33,44,55,66]
-    year = [[1], [2], [3], [4], [5], [6]]
-    loss = [cost_der(year, pop, [1, 1], i) for i in range(2)]
+    y = [11,22,33,44,55,66]
+    x = [[1], [2], [3], [4], [5], [6]]
     epoch = 1000
     param = [0, 22]
-    sys.setrecursionlimit(20000)
-    new_param = train(year, pop, param, lrate = 0.0005, epoch = epoch)
+    new_param = train(x, y, param, lrate = 0.0005, epoch = epoch)
     prediction = [[6], [7], [7.5]]
     expected = [66, 77, 82.5]
     predict(prediction, new_param, expected)
