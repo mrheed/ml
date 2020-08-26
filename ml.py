@@ -66,10 +66,12 @@ def cost_der(x, y, param, active = 0):
 def grad_descent(x, y, param, lrate, epoch):
     return [param[i] - (lrate*cost_der(x, y, param, i)) for i in range(len(param))]
 
-def train(x, y, param, lrate = 0.1, epoch = 100):
+def train(x, y, param, lrate = 0.1, epoch = 100, interval = 1):
     for i in range(epoch):
         param = grad_descent(x, y, param, lrate, epoch)
-        print("Loss -> {} | Param -> {} ".format(cost(x,y,param), param))
+        if (i % interval == 0) or (i+1 == epoch):
+            print("Loss -> {} | Param -> {} ".format(cost(x,y,param), param))
+
     return param
 
 def predict(x, param, expected):
@@ -95,14 +97,16 @@ def main():
     # A[0][0]B[0][2] * A[0][1]B[1][2] * A[0][2]B[2][2]
     # A[0][0]B[0][3] * A[0][1]B[1][3] * A[0][2]B[2][3]
     # Linear
-    y = [11,22,33,44,55,66]
+    y = [111,222,333,444,555,666]
     x = [[1], [2], [3], [4], [5], [6]]
-    epoch = 1000
     # The 0 index of param is for bias, in other words the actual param length is 1
-    param = [0, 22]
-    new_param = train(x, y, param, lrate = 0.0005, epoch = epoch)
+    param = [0, 2]
+    new_param = train(x, y, param, 
+            lrate = 0.0001, 
+            epoch = 500, 
+            interval = 100)
     prediction = [[6], [7], [7.5]]
-    expected = [66, 77, 82.5]
+    expected = [666, 777, 832.5]
     predict(prediction, new_param, expected)
     
 
