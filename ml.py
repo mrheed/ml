@@ -63,12 +63,12 @@ def cost_der(x, y, param, active = 0):
     return (1/n)*sum([(x[i]-y[i])*(param[active] if active != 0 else 1) for i in range(n)])
 
 # Gradient descent, mencari titik minimum dari fungsi hingga gradient dari titik tersebut mendekati/menjadi 0
-def grad_descent(x, y, param, lrate, epoch):
+def grad_descent(x, y, param, lrate):
     return [param[i] - (lrate*cost_der(x, y, param, i)) for i in range(len(param))]
 
 def train(x, y, param, lrate = 0.1, epoch = 100, interval = 1):
     for i in range(epoch):
-        param = grad_descent(x, y, param, lrate, epoch)
+        param = grad_descent(x, y, param, lrate)
         if (i % interval == 0) or (i+1 == epoch):
             print("Loss -> {} | Param -> {} ".format(cost(x,y,param), param))
 
