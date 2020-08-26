@@ -1,4 +1,4 @@
-import random
+import random, sys, resource
 
 class Matrix:
     def __init__(self, data):
@@ -66,13 +66,27 @@ def cost_der(x, y, param, active = 0):
     # Turunan parsial dari fungsi cost
     return (1/n)*sum([(x[i]-y[i])*(param[active] if active != 0 else 1) for i in range(n)])
 
-# Gradient descent, mencari titik minimum dari fungsi linear hingga gradient dari titik tersebut menjadi 0
-# Bukannya semakin turun malah naik (aneh betul)
-def grad_descent(x, y, param, lrate = 0.1, epoch = 100, loss = 0):
+# Gradient descent, mencari titik minimum dari fungsi hingga gradient dari titik tersebut menjadi 0
+def grad_descent(x, y, param, lrate, epoch):
     der = [param[i] - (lrate*cost_der(x, y, param, i)) for i in range(len(param))]
-    print("[Loss] {}, [Param 0] {} [Param 1] {}".format(cost(x,y,param), der[0], der[1]))
-    if epoch != 0:
-        grad_descent(x, y, der, lrate = lrate, epoch = epoch-1)
+    return der
+
+def train(x, y, param, lrate = 0.1, epoch = 100):
+    for i in range(epoch):
+        param = grad_descent(x, y, param, lrate, epoch)
+        print("Loss -> {} | Param -> {} ".format(cost(x,y,param), param))
+    return param
+
+def predict(x, param, expected):
+    prediction = linear(x, param)
+    for i, v in enumerate(prediction):
+        i = i+1
+        print("="*50)
+        print("{}. Prediction   -> {}".format(i, v))
+        print("{}. Expected     -> {}".format(i, expected[i-1]))
+        print("{}. Error        -> {}".format(i, expected[i-1]-v))
+        print("="*50)
+
 
 # Normal equation
 def normal_eq():
@@ -88,8 +102,13 @@ def main():
     pop = [11,22,33,44,55,66]
     year = [[1], [2], [3], [4], [5], [6]]
     loss = [cost_der(year, pop, [1, 1], i) for i in range(2)]
-    grad_descent(year, pop, [0, 2], lrate = 0.01, epoch = 500)
-    # Sini
+    epoch = 1000
+    param = [0, 22]
+    sys.setrecursionlimit(20000)
+    new_param = train(year, pop, param, lrate = 0.0005, epoch = epoch)
+    prediction = [[6], [7], [7.5]]
+    expected = [66, 77, 82.5]
+    predict(prediction, new_param, expected)
     
 
 
