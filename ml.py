@@ -45,33 +45,36 @@ class Matrix:
     def multiply(self, matrix):
         for i in range(self.row):
             for j in range(self.col):
-                if len(matrix) == 1:
-                    self.matrix[i][j] *= matrix[0]
-                else:
-                    self.matrix[i][j] = matrix[i][j]
+                self.matrix[i][j] *= matrix[0] if len(matrix) == 1 else matrix[i][j]
         return self
 
 def linear(x, param):
-    return [param[i][0] + sum([x[i][j] * param[i][j+1] for j in range(len(x[i]))]) for i in range(len(x))]
+    # Return fungsi hipotesis
+    return [param[0] + sum([x[i][j] * param[j+1] for j in range(len(x[i]))]) for i in range(len(x))]
 
 def cost(x, y, param):
     n = len(y)
+    # Hitung prediksi titik y
     x = linear(x, param)
+    # Hitung jumlah loss menggunakan MSE (Mean Squared Error)
     return 1/(2*n)*sum([(x[i] - y[i])**2 for i in range(n)])
 
 def cost_der(x, y, param, active = 0):
     n = len(y)
     x = linear(x, param)
-    return 1/n*sum([x[i]*param[i][active] for i in range(n)])
+    #print([(x[i]-y[i])*(param[i][active] if active != 0 else 1) for i in range(n)])
+    # Turunan parsial dari fungsi cost
+    return (1/n)*sum([(x[i]-y[i])*(param[active] if active != 0 else 1) for i in range(n)])
 
-def grad_descent(x, y, param, lrate = 0.1, epoch = 100):
-    loss = cost_der(x, y, param, 0)
-    der = [loss - (lrate*cost_der(x, y, param, i)) for i in range(len(param[0]))]
-    print(loss)
+# Gradient descent, mencari titik minimum dari fungsi linear hingga gradient dari titik tersebut menjadi 0
+# Bukannya semakin turun malah naik (aneh betul)
+def grad_descent(x, y, param, lrate = 0.1, epoch = 100, loss = 0):
+    der = [param[i] - (lrate*cost_der(x, y, param, i)) for i in range(len(param))]
+    print("[Loss] {}, [Param 0] {} [Param 1] {}".format(cost(x,y,param), der[0], der[1]))
     if epoch != 0:
-        grad_descent(x, y, [der] * len(x), lrate = lrate, epoch = epoch-1)
-    print(param)
+        grad_descent(x, y, der, lrate = lrate, epoch = epoch-1)
 
+# Normal equation
 def normal_eq():
     pass
 
@@ -82,9 +85,10 @@ def main():
     # A[0][0]B[0][2] * A[0][1]B[1][2] * A[0][2]B[2][2]
     # A[0][0]B[0][3] * A[0][1]B[1][3] * A[0][2]B[2][3]
     # Linear
-    pop = [2,3,4,5,6,7]
+    pop = [11,22,33,44,55,66]
     year = [[1], [2], [3], [4], [5], [6]]
-    grad_descent(year, pop, [[1, 1]] * len(year), lrate = 1)
+    loss = [cost_der(year, pop, [1, 1], i) for i in range(2)]
+    grad_descent(year, pop, [0, 2], lrate = 0.01, epoch = 500)
     # Sini
     
 
