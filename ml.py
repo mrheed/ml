@@ -1,4 +1,5 @@
-import sys
+import sys, csv, json
+from decimal import *
 
 class Matrix:
     def __init__(self, data):
@@ -54,13 +55,13 @@ def cost(x, y, param):
     # Hitung prediksi titik y
     x = linear(x, param)
     # Hitung jumlah loss menggunakan MSE (Mean Squared Error)
-    return 1/(2*n)*sum([(x[i] - y[i])**2 for i in range(n)])
+    return 1/(2*n)*sum([(float(x[i]) - float(y[i]))**2 for i in range(n)])
 
 def cost_der(x, y, param, active = 0):
     n = len(y)
     x = linear(x, param)
     # Turunan parsial dari fungsi cost
-    return (1/n)*sum([(x[i]-y[i])*(param[active] if active != 0 else 1) for i in range(n)])
+    return (1/n)*sum([(float(x[i]) - float(y[i]))*(param[active] if active != 0 else 1) for i in range(n)])
 
 # Gradient descent, mencari titik minimum dari fungsi hingga gradient dari titik tersebut mendekati/menjadi 0
 def grad_descent(x, y, param, lrate):
@@ -89,6 +90,54 @@ def predict(x, param, expected):
 def normal_eq():
     pass
 
+def read_csv(target, normalize = False, skip = [], y_key = ''):
+    col = []
+    x = []
+    y = []
+    with open(target) as f:
+        data = csv.reader(f, delimiter=',')
+        for i, v in enumerate(data):
+            if i == 0:
+                col = v
+            else:
+                d = {}
+                a = []
+                for i, k in enumerate(v):
+                    if col[i] in skip: continue
+                    if col[i] == y_key:
+                        y.append(k)
+                        continue
+                    d[col[i]] = k
+                if normalize:
+                    d = normalization(d)
+                    a = [d[k] for k in d]
+                x.append(a)
+                if i > 30:
+                    break
+        f.close()
+    return x, y, len(x[0])
+
+def scale(data, scale):
+    return float(data)*scale
+
+def normalization(data):
+    for k in data:
+        if data[k] == '':
+            data[k] = 0
+        if k == 'Date':
+            n_date = sum([int(j) for j in data[k].split('-')])
+            data[k] = scale(n_date, 0.0005)
+        elif k in ['MAX', 'MIN', 'MEA', 'YR', 'MO', 'DA', 'Precip']:
+            data[k] = scale(data[k], 0.02)
+        elif k in ['PRCP']:
+            data[k] = scale(data[k], 10)
+        elif k in ['MaxTemp', 'MinTemp', 'MeanTemp']:
+            data[k] = scale(data[k], 0.05)
+        else:
+            data[k] = scale(data[k], 0.0001)
+    return data
+
+
 def main():
     sys.setrecursionlimit(20000)
     # Matrix 
@@ -97,17 +146,19 @@ def main():
     # A[0][0]B[0][2] * A[0][1]B[1][2] * A[0][2]B[2][2]
     # A[0][0]B[0][3] * A[0][1]B[1][3] * A[0][2]B[2][3]
     # Linear
-    y = [111,222,333,444,555,666]
-    x = [[1], [2], [3], [4], [5], [6]]
+    skip = ['Precip', 'WindGustSpd', 'Snowfall', 'PoorWeather', 'DR', 'SPD', 'SNF', 'SND', 'FT', 'FB', 'FTI', 'ITH', 'PGT', 'TSHDSBRSGF', 'SD3', 'RHX', 'RHN', 'RVG', 'WTE', 'PRCP']
+    n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp')
+    #y = [111,222,333,444,555,666]
+    #x = [[1], [2], [3], [4], [5], [6]]
     # The 0 index of param is for bias, in other words the actual param length is 1
-    param = [0, 2]
-    new_param = train(x, y, param, 
-            lrate = 0.0001, 
+    param = [0] + [1] * l_p
+    new_param = train(n_x, n_y, param, 
+            lrate = 0.1, 
             epoch = 500, 
-            interval = 100)
+            interval = 1)
     prediction = [[6], [7], [7.5]]
     expected = [666, 777, 832.5]
-    predict(prediction, new_param, expected)
+    #predict(prediction, new_param, expected)
     
 
 
