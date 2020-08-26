@@ -1,4 +1,4 @@
-import sys, csv, json
+import sys, csv, json, argparse
 from decimal import *
 
 class Matrix:
@@ -72,25 +72,32 @@ def train(x, y, param, lrate = 0.1, epoch = 100, interval = 1):
         param = grad_descent(x, y, param, lrate)
         if (i % interval == 0) or (i+1 == epoch):
             print("Loss -> {} | Param -> {} ".format(cost(x,y,param), param))
-
+    with open('train.data', 'w') as f:
+        f.write(','.join(str(v) for v in param))
+        f.close()
     return param
 
 def predict(x, param, expected):
     prediction = linear(x, param)
+    delta = 0
     for i, v in enumerate(prediction):
         i = i+1
+        d = float(v)-float(expected[i-1])
+        d = d if d > 0 else -d
         print("="*50)
         print("{}. Prediction   -> {}".format(i, v))
         print("{}. Expected     -> {}".format(i, expected[i-1]))
-        print("{}. Delta        -> {}".format(i, v-expected[i-1]))
+        print("{}. Delta        -> {}".format(i, d))
         print("="*50)
+        delta += d
+    print("Delta Mean       -> {}".format(delta/len(prediction)))
 
 
 # Normal equation
 def normal_eq():
     pass
 
-def read_csv(target, normalize = False, skip = [], y_key = ''):
+def read_csv(target, normalize = False, skip = [], y_key = '', limit = -1):
     col = []
     x = []
     y = []
@@ -102,18 +109,18 @@ def read_csv(target, normalize = False, skip = [], y_key = ''):
             else:
                 d = {}
                 a = []
-                for i, k in enumerate(v):
-                    if col[i] in skip: continue
-                    if col[i] == y_key:
+                for i2, k in enumerate(v):
+                    if col[i2] in skip: continue
+                    if col[i2] == y_key:
                         y.append(k)
                         continue
-                    d[col[i]] = k
+                    d[col[i2]] = k
                 if normalize:
                     d = normalization(d)
                     a = [d[k] for k in d]
                 x.append(a)
-                if i > 30:
-                    break
+            if i > limit and limit != -1:
+                break
         f.close()
     return x, y, len(x[0])
 
@@ -137,28 +144,62 @@ def normalization(data):
             data[k] = scale(data[k], 0.0001)
     return data
 
+def read_n_train():
+    sys.setrecursionlimit(20000)
+    skip = ['Precip', 
+            'WindGustSpd', 
+            'Snowfall', 
+            'PoorWeather', 
+            'DR', 
+            'SPD', 
+            'SNF', 
+            'SND', 
+            'FT', 
+            'FB', 
+            'FTI', 
+            'ITH', 
+            'PGT', 
+            'TSHDSBRSGF', 
+            'SD3', 
+            'RHX', 
+            'RHN', 
+            'RVG', 
+            'WTE', 
+            'PRCP']
+    n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp', limit = 100)
+    param = [0] + [2] * l_p
+    new_param = train(n_x, n_y, param, 
+            lrate = 0.0005, 
+            epoch = 1000, 
+            interval = 100)
+    prediction = [i for i in n_x]
+    expected = [i for i in n_y]
+    predict(prediction, new_param, expected)
+
+def only_predict(path):
+    param = []
+    x = []
+    with open(path, 'r') as f:
+        x = json.loads(f.read())
+        f.close()
+    with open('train.data', 'r') as f:
+        param = [float(v) for v in f.read().split(',')]
+        f.close()
+    for i, v in enumerate(linear(x, param)):
+        print("="*50)
+        print("{}. x -> {}".format(i+1, x[i]))
+        print("{}. y -> {}".format(i+1, v))
+        print("="*50)
 
 def main():
-    sys.setrecursionlimit(20000)
-    # Matrix 
-    # A[0][0]B[0][0] * A[0][1]B[1][0] * A[0][2]B[2][0]
-    # A[0][0]B[0][1] * A[0][1]B[1][1] * A[0][2]B[2][1]
-    # A[0][0]B[0][2] * A[0][1]B[1][2] * A[0][2]B[2][2]
-    # A[0][0]B[0][3] * A[0][1]B[1][3] * A[0][2]B[2][3]
-    # Linear
-    skip = ['Precip', 'WindGustSpd', 'Snowfall', 'PoorWeather', 'DR', 'SPD', 'SNF', 'SND', 'FT', 'FB', 'FTI', 'ITH', 'PGT', 'TSHDSBRSGF', 'SD3', 'RHX', 'RHN', 'RVG', 'WTE', 'PRCP']
-    n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp')
-    #y = [111,222,333,444,555,666]
-    #x = [[1], [2], [3], [4], [5], [6]]
-    # The 0 index of param is for bias, in other words the actual param length is 1
-    param = [0] + [1] * l_p
-    new_param = train(n_x, n_y, param, 
-            lrate = 0.1, 
-            epoch = 500, 
-            interval = 1)
-    prediction = [[6], [7], [7.5]]
-    expected = [666, 777, 832.5]
-    #predict(prediction, new_param, expected)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--train', action='store_true')
+    parser.add_argument('-p', '--predict', default='')
+    args = parser.parse_args()
+    if args.train:
+        read_n_train()
+    if args.predict != '':
+        only_predict(args.predict)
     
 
 
