@@ -1,4 +1,4 @@
-import sys, csv, json, argparse
+import sys, csv, json, argparse, threading, queue
 from decimal import *
 
 class Matrix:
@@ -67,15 +67,34 @@ def cost_der(x, y, param, active = 0):
 def grad_descent(x, y, param, lrate):
     return [param[i] - (lrate*cost_der(x, y, param, i)) for i in range(len(param))]
 
-def train(x, y, param, lrate = 0.1, epoch = 100, interval = 1):
-    for i in range(epoch):
-        param = grad_descent(x, y, param, lrate)
-        if (i % interval == 0) or (i+1 == epoch):
-            print("Loss -> {} | Param -> {} ".format(cost(x,y,param), param))
+def train(x, y, param, lrate = 0.1, epoch = 100, interval = 1, thread_count = 1):
+    global cur_epoch, p
+    cur_epoch = 0
+    p = param
+    def inner_train(lock):
+        global cur_epoch, p
+        lock.acquire()
+        p = grad_descent(x, y, p, lrate)
+        cur_epoch += 1
+        lock.release()
+
+    for i in range(int(epoch/thread_count)):
+        sys.stdout.write('\r')
+        sys.stdout.write('{}%'.format(int(cur_epoch/epoch*100)))
+        sys.stdout.flush()
+        lock = threading.Lock()
+        threads = [threading.Thread(target=inner_train, args=(lock,), daemon=True) for _ in range(thread_count)]
+        for thread in threads:
+            thread.start()
+            thread.join()
+        if (i % (int(interval/thread_count)) == 0) or (i+1 == epoch):
+            print("\r")
+            print("Loss -> {} | Param -> {} ".format(cost(x,y,p), p))
+
     with open('train.data', 'w') as f:
-        f.write(','.join(str(v) for v in param))
+        f.write(','.join(str(v) for v in p))
         f.close()
-    return param
+    return p
 
 def predict(x, param, expected):
     prediction = linear(x, param)
@@ -148,6 +167,8 @@ def read_n_train():
     sys.setrecursionlimit(20000)
     skip = ['Precip', 
             'WindGustSpd', 
+            'MaxTemp',
+            'MinTemp',
             'Snowfall', 
             'PoorWeather', 
             'DR', 
@@ -165,13 +186,15 @@ def read_n_train():
             'RHN', 
             'RVG', 
             'WTE', 
+            'Date',
             'PRCP']
-    n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp', limit = 100)
-    param = [0] + [2] * l_p
+    n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp', limit = 1000)
+    param = [0] + [i**2 for i in range(l_p)]
     new_param = train(n_x, n_y, param, 
-            lrate = 0.0005, 
-            epoch = 1000, 
-            interval = 100)
+            lrate = 0.001, 
+            epoch = 500, 
+            interval = 100,
+            thread_count = 4)
     prediction = [i for i in n_x]
     expected = [i for i in n_y]
     predict(prediction, new_param, expected)
@@ -180,7 +203,7 @@ def only_predict(path):
     param = []
     x = []
     with open(path, 'r') as f:
-        x = json.loads(f.read())
+        x = [normalization(v) for v in json.loads(f.read())]
         f.close()
     with open('train.data', 'r') as f:
         param = [float(v) for v in f.read().split(',')]
@@ -192,6 +215,14 @@ def only_predict(path):
         print("="*50)
 
 def main():
+    # Features
+    # 'STA': '10001' 
+    # 'YR': '42' 
+    # 'MO': '7' 
+    # 'DA': '1' 
+    # 'MAX': '78' 
+    # 'MIN': '72' 
+    # 'MEA': '75'
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--train', action='store_true')
     parser.add_argument('-p', '--predict', default='')
