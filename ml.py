@@ -188,7 +188,7 @@ def read_n_train():
             'WTE', 
             'Date',
             'PRCP']
-    n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp', limit = 1000)
+    n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp', limit = 10000)
     param = [0] + [i**2 for i in range(l_p)]
     new_param = train(n_x, n_y, param, 
             lrate = 0.001, 
