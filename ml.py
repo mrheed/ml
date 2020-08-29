@@ -1,7 +1,6 @@
-import sys, csv, json, argparse, threading, queue
-from decimal import *
-from queue import Queue
+import sys, csv, json, argparse
 from pdb import set_trace
+from multiprocessing import Pool, Process, Queue, set_start_method, get_context
 
 class Matrix:
     def __init__(self, data):
@@ -50,6 +49,7 @@ class Matrix:
 
 def linear(x, param):
     # Return fungsi hipotesis
+
     return [param[0] + sum([x[i][j] * param[j+1] for j in range(len(x[i]))]) for i in range(len(x))]
 
 def cost(x, y, param):
@@ -69,26 +69,23 @@ def cost_der(x, y, param, active = 0):
 def grad_descent(x, y, param, lrate):
     return [param[i] - (lrate*cost_der(x, y, param, i)) for i in range(len(param))]
 
-def train(x, y, param, lrate = 0.1, epoch = 100, interval = 1, thread_count = 1):
-    global cur_epoch, p
+def inner_train(q, cost, cur_epoch, x, y, p, lrate, epoch):
+    sys.stdout.write('\r')
+    sys.stdout.write("[{}%] Loss -> {} | Param -> {} ".format(int(cur_epoch/epoch*100),cost(x,y,p), p))
+    sys.stdout.flush()
+    q.put({'ce': cur_epoch+1, 'gd': grad_descent(x, y, p, lrate)})
+
+def train(x, y, param, lrate = 0.1, epoch = 100):
+    global cur_epoch
     cur_epoch = 0
     p = param
-    def inner_train(lock):
-        global cur_epoch, p
-        lock.acquire()
-        sys.stdout.write('\r')
-        sys.stdout.write("[{}%] Loss -> {} | Param -> {} ".format(int(cur_epoch/epoch*100),cost(x,y,p), p))
-        sys.stdout.flush()
-        p = grad_descent(x, y, p, lrate)
-        cur_epoch += 1
-        lock.release()
-        q.task_done()
-    q = Queue()
-    lock = threading.Lock()
+    ctx = get_context('spawn')
+    q = ctx.Queue()
     for i in range(epoch):
-        threading.Thread(target=inner_train, args=(lock,), daemon=True).start()
-        q.put(cost)
-    q.join()
+        ps = ctx.Process(target=inner_train, args=(q, cost, cur_epoch, x, y, p, lrate, epoch,)).start()
+        pv = q.get()
+        p = pv['gd']
+        cur_epoch = pv['ce']
     with open('train.data', 'w') as f:
         f.write(','.join(str(v) for v in p))
         f.close()
@@ -187,12 +184,10 @@ def read_n_train():
             'Date',
             'PRCP']
     n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp', limit = -1)
-    param = [0] + [i**2 for i in range(l_p)]
+    param = [0] + [(i+1)**2 for i in range(l_p)]
     new_param = train(n_x, n_y, param, 
             lrate = 0.001, 
-            epoch = 500, 
-            interval = 100,
-            thread_count = 100)
+            epoch = 1000)
     prediction = [i for i in n_x]
     expected = [i for i in n_y]
     predict(prediction, new_param, expected)
@@ -225,6 +220,7 @@ def main():
     parser.add_argument('-t', '--train', action='store_true')
     parser.add_argument('-p', '--predict', default='')
     args = parser.parse_args()
+    set_start_method('spawn')
     if args.train:
         read_n_train()
     if args.predict != '':
