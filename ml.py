@@ -76,7 +76,6 @@ def inner_train(q, cost, cur_epoch, x, y, p, lrate, epoch):
     q.put({'ce': cur_epoch+1, 'gd': grad_descent(x, y, p, lrate)})
 
 def train(x, y, param, lrate = 0.1, epoch = 100):
-    global cur_epoch
     cur_epoch = 0
     p = param
     ctx = get_context('spawn')
