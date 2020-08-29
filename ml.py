@@ -1,5 +1,7 @@
 import sys, csv, json, argparse, threading, queue
 from decimal import *
+from queue import Queue
+from pdb import set_trace
 
 class Matrix:
     def __init__(self, data):
@@ -74,23 +76,22 @@ def train(x, y, param, lrate = 0.1, epoch = 100, interval = 1, thread_count = 1)
     def inner_train(lock):
         global cur_epoch, p
         lock.acquire()
-        p = grad_descent(x, y, p, lrate)
-        cur_epoch += 1
-        lock.release()
-
-    for i in range(int(epoch/thread_count)):
         sys.stdout.write('\r')
         sys.stdout.write('{}%'.format(int(cur_epoch/epoch*100)))
         sys.stdout.flush()
-        lock = threading.Lock()
-        threads = [threading.Thread(target=inner_train, args=(lock,), daemon=True) for _ in range(thread_count)]
-        for thread in threads:
-            thread.start()
-            thread.join()
-        if (i % (int(interval/thread_count)) == 0) or (i+1 == epoch):
-            print("\r")
-            print("Loss -> {} | Param -> {} ".format(cost(x,y,p), p))
-
+        p = grad_descent(x, y, p, lrate)
+        cur_epoch += 1
+        lock.release()
+    q = Queue()
+    lock = threading.Lock()
+    for i in range(epoch):
+        threading.Thread(target=inner_train, args=(lock,), daemon=True).start()
+        #if (i % interval == 0) or (i+1 == epoch):
+        #    print("\r")
+        #    print("Loss -> {} | Param -> {} ".format(cost(x,y,p), p))
+    q.join()
+    print("Loss -> {} | Param -> {} ".format(cost(x,y,p), p))
+    set_trace()
     with open('train.data', 'w') as f:
         f.write(','.join(str(v) for v in p))
         f.close()
@@ -194,7 +195,7 @@ def read_n_train():
             lrate = 0.001, 
             epoch = 500, 
             interval = 100,
-            thread_count = 4)
+            thread_count = 100)
     prediction = [i for i in n_x]
     expected = [i for i in n_y]
     predict(prediction, new_param, expected)
