@@ -77,21 +77,18 @@ def train(x, y, param, lrate = 0.1, epoch = 100, interval = 1, thread_count = 1)
         global cur_epoch, p
         lock.acquire()
         sys.stdout.write('\r')
-        sys.stdout.write('{}%'.format(int(cur_epoch/epoch*100)))
+        sys.stdout.write("[{}%] Loss -> {} | Param -> {} ".format(int(cur_epoch/epoch*100),cost(x,y,p), p))
         sys.stdout.flush()
         p = grad_descent(x, y, p, lrate)
         cur_epoch += 1
         lock.release()
+        q.task_done()
     q = Queue()
     lock = threading.Lock()
     for i in range(epoch):
         threading.Thread(target=inner_train, args=(lock,), daemon=True).start()
-        #if (i % interval == 0) or (i+1 == epoch):
-        #    print("\r")
-        #    print("Loss -> {} | Param -> {} ".format(cost(x,y,p), p))
+        q.put(cost)
     q.join()
-    print("Loss -> {} | Param -> {} ".format(cost(x,y,p), p))
-    set_trace()
     with open('train.data', 'w') as f:
         f.write(','.join(str(v) for v in p))
         f.close()
@@ -189,7 +186,7 @@ def read_n_train():
             'WTE', 
             'Date',
             'PRCP']
-    n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp', limit = 10000)
+    n_x, n_y, l_p = read_csv('datasets/Summary of Weather.csv', normalize=True, skip=skip, y_key = 'MeanTemp', limit = -1)
     param = [0] + [i**2 for i in range(l_p)]
     new_param = train(n_x, n_y, param, 
             lrate = 0.001, 
